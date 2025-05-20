@@ -93,9 +93,8 @@ def process_packet(packet):
             sport = packet[UDP].sport
             dport = packet[UDP].dport
 
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        if proto:
+        if proto and sport is not None and dport is not None:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             log_connection(timestamp, ip_src, ip_dst, sport, dport, proto)
             detect_port_scan(ip_src, dport)
             detect_brute_force(ip_src, dport)
