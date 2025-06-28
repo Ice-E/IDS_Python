@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IDS - Tableau de bord</title>
+</head>
+<body>
+    <h1>Intrusion Detection System</h1>
+    <h2>Alertes ARP Spoofing</h2>
+    <ul>
+        {% for alert in alerts %}
+        <li><strong>{{ alert.ip }}</strong> – {{ alert.alert }} (MAC: {{ alert.mac }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
