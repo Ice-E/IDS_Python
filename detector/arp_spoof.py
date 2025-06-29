@@ -1,26 +1,32 @@
 from scapy.all import ARP, sniff
 from collections import defaultdict
+from utils.logger import log_alert
 
-# Stockage des IPs associées à plusieurs MACs
-ip_mac_map = defaultdict(set)
-
-def process_packet(packet):
-    if packet.haslayer(ARP) and packet[ARP].op == 2:  # ARP reply
-        ip = packet[ARP].psrc
-        mac = packet[ARP].hwsrc
-        ip_mac_map[ip].add(mac)
+# ARP table that tracks observed MAC addresses for each IP
+arp_table = defaultdict(set)
 
 def detect_arp_spoofing():
-    ip_mac_map.clear()
-    # Écoute de 50 paquets ARP seulement pour éviter les blocages
-    sniff(filter="arp", prn=process_packet, count=50, store=0)
-    
-    alerts = []
-    for ip, macs in ip_mac_map.items():
-        if len(macs) > 1:
-            alerts.append({
-                "ip": ip,
-                "mac": ", ".join(macs),
-                "alert": "ARP spoofing détecté (plusieurs MAC pour la même IP)"
-            })
-    return alerts
+    """
+    Starts sniffing ARP packets and checks for spoofing attempts in real time.
+    """
+    sniff(prn=handle_packet, store=0)
+
+def handle_packet(pkt):
+    """
+    Callback function that processes each sniffed packet and detects ARP spoofing.
+
+    Parameters:
+    - pkt: The captured packet.
+    """
+    if pkt.haslayer(ARP) and pkt[ARP].op == 2:  # ARP reply
+        src_ip = pkt[ARP].psrc
+        src_mac = pkt[ARP].hwsrc
+
+        # If a new MAC is associated with a known IP, raise an alert
+        if src_mac not in arp_table[src_ip] and arp_table[src_ip]:
+            log_alert(
+                f"ARP Spoofing detected: {src_ip} is being spoofed!",
+                attack_type="ARP Spoofing",
+                source_ip=src_ip
+            )
+        arp_table[src_ip].add(src_mac)
