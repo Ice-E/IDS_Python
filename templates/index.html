@@ -1,67 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="5">
-    <title>IDS Python - Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>IDS Python - Event Log</title>
+
+  <!-- Load CSS from Flask static folder -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>IDS Python - Event Log</h1>
 
-    <!-- Buttons to simulate attacks -->
-    <form action="/attack/arp"><button>ARP Spoof</button></form>
+  <!-- Page header -->
+  <h1 class="center">IDS Python - Event Log</h1>
+
+  <!-- Action buttons (simulate attacks / clear logs) -->
+  <div class="center">
     <form action="/attack/ping"><button>Ping Flood</button></form>
     <form action="/attack/port"><button>Port Scan</button></form>
     <form action="/attack/syn"><button>SYN Flood</button></form>
+    <form action="/clear" method="post"><button>Clear Logs</button></form>
+  </div>
 
-    <!-- Button to clear logs -->
-    <form action="/clear" method="post">
-        <button type="submit">Clear Logs</button>
-    </form>
+  <!-- Main layout container -->
+  <div class="container">
 
-    <!-- Chart showing attack type distribution -->
-    <canvas id="attackChart" width="400" height="200"></canvas>
+    <!-- Doughnut chart: attack type counts -->
+    <div class="chart">
+      <canvas id="attackChart"></canvas>
+    </div>
 
-    <table>
+    <!-- Line chart: timeline per attack -->
+    <div class="chart">
+      <canvas id="timeChart"></canvas>
+    </div>
+
+    <!-- Table: recent log entries -->
+    <div class="log-table">
+      <table>
         <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Event Type</th>
-                <th>Details</th>
-            </tr>
+          <tr><th>Timestamp</th><th>Type</th><th>Source</th><th>Message</th></tr>
         </thead>
         <tbody>
-            {% for log in logs %}
-            <tr>
-                <td>{{ log.timestamp }}</td>
-                <td>{{ log.event_type }}</td>
-                <td>{{ log.details }}</td>
-            </tr>
-            {% else %}
-            <tr><td colspan="3">No events detected yet.</td></tr>
-            {% endfor %}
+        {% for log in logs %}
+          <tr class="log-{{ log.type|replace(' ', '-') }}">
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.type }}</td>
+            <td>{{ log.source }}</td>
+            <td>{{ log.message }}</td>
+          </tr>
+        {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
 
-    <script>
-        const attackCounts = {{ attack_counts|tojson }};
-        const labels = Object.keys(attackCounts);
-        const data = Object.values(attackCounts);
+  </div> <!-- end container -->
 
-        const ctx = document.getElementById('attackChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Detected Events',
-                    data: data,
-                    borderWidth: 1
-                }]
-            }
-        });
-    </script>
+  <!-- Chart rendering scripts -->
+  <script>
+    // Chart 1: Doughnut - attack count per type
+    const counts = {{ attack_counts|tojson }};
+    const ctx1 = document.getElementById('attackChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(counts),
+        datasets: [{
+          data: Object.values(counts),
+          backgroundColor: ['#3ba9e3','#ff6384','#ffa500'] // match CSS colors
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    // Chart 2: Line - attack evolution over time
+    const labels = {{ time_labels|tojson }};
+    const series = {{ series|tojson }};
+    const ctx2 = document.getElementById('timeChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Ping Flood',
+            data: series['Ping Flood'],
+            borderColor: '#3ba9e3',
+            fill: false
+          },
+          {
+            label: 'Port Scan',
+            data: series['Port Scan'],
+            borderColor: '#ff6384',
+            fill: false
+          },
+          {
+            label: 'SYN Flood',
+            data: series['SYN Flood'],
+            borderColor: '#ffa500',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            display: true,
+            title: { display: true, text: 'Time' }
+          },
+          y: {
+            display: true,
+            title: { display: true, text: 'Cumul' }
+          }
+        }
+      }
+    });
+  </script>
+
 </body>
 </html>

@@ -1,24 +1,21 @@
 {
   "log_file": "logs/logs.json",
   "detection": {
-    "arp_spoof": {
-      "enabled": true
-    },
     "syn_flood": {
       "enabled": true,
-      "threshold": 100
+      "threshold": 50
     },
     "ping_flood": {
       "enabled": true,
-      "threshold": 200
+      "threshold": 100
     },
     "port_scan": {
       "enabled": true,
-      "max_ports_per_minute": 50
+      "max_ports_per_time": 15
     }
   },
   "network": {
-    "interface": "eth0",
-    "monitor_ips": ["192.168.1.1", "192.168.1.5"]
-  }
+  "interface": "\\Device\\NPF_{479A6F14-F90F-4628-AEF4-621F46F05118}",
+  "monitor_ips": ["100.64.22.76"]
+}
 }

@@ -1,0 +1,92 @@
+[
+  {
+    "timestamp": "2025-06-30 15:24:39.756675",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289879.7566726
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:41.760003",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289881.7599995
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:43.762714",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289883.7627113
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:45.768422",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289885.7684186
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:47.775596",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289887.7755911
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:49.779858",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289889.779854
+    }
+  },
+  {
+    "timestamp": "2025-06-30 15:24:51.782525",
+    "type": null,
+    "source": null,
+    "message": {
+      "type": "arp_spoof",
+      "ip": "100.64.22.126",
+      "real_mac": "11:22:33:44:55:66",
+      "spoofed_mac": "00:45:e2:08:7b:3b",
+      "timestamp": 1751289891.7825227
+    }
+  }
+]{"timestamp": "2025-06-30 15:25:09.336031", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289909.3360245}}
+{"timestamp": "2025-06-30 15:25:24.438584", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289924.438579}}
+{"timestamp": "2025-06-30 15:25:24.438844", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289924.4388366}}
+{"timestamp": "2025-06-30 15:25:47.990501", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289947.990496}}
+{"timestamp": "2025-06-30 15:26:12.566877", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289972.5668738}}
+{"timestamp": "2025-06-30 15:26:12.567111", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289972.567108}}
+{"timestamp": "2025-06-30 15:26:37.689889", "type": null, "source": null, "message": {"type": "arp_spoof", "ip": "192.168.203.229", "real_mac": "11:22:33:44:55:66", "spoofed_mac": "00:45:e2:08:7b:3b", "timestamp": 1751289997.6898859}}

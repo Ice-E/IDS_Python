@@ -1,47 +1,34 @@
-import json
+import os, json
 from datetime import datetime
 
-LOG_FILE = "logs.json"
-
-def log_event(event_type, details):
-    """
-    Logs a generic event to the log file as a single-line JSON object.
-    
-    Parameters:
-    - event_type (str): Type or category of the event.
-    - details (str): Description or additional information about the event.
-    """
-    log_entry = {
-        "timestamp": str(datetime.now()),
-        "event_type": event_type,
-        "details": details
-    }
-    with open(LOG_FILE, "a") as f:
-        f.write(json.dumps(log_entry) + "\n")
+# Assure-toi que le dossier logs existe
+os.makedirs("logs", exist_ok=True)
+LOG_FILE = os.path.join("logs", "logs.json")
 
 def log_alert(message, attack_type=None, source_ip=None):
     """
-    Logs a structured security alert into a JSON list in the log file.
-    
-    Parameters:
-    - message (str): Description of the alert.
-    - attack_type (str, optional): Type of the attack (e.g., 'ARP Spoofing').
-    - source_ip (str, optional): Source IP address involved in the alert.
+    Logs a structured security alert as a single-line JSON object,
+    avec un message lisible par le front.
     """
+    # Déplie le dict message si nécessaire
+    if isinstance(message, dict):
+        kind   = message.get("type")
+        ip     = message.get("ip")
+        real   = message.get("real_mac")
+        spoof  = message.get("spoofed_mac")
+        msg    = f"{kind} @ {ip} → real:{real} fake:{spoof}"
+    else:
+        msg = str(message)
+
     log_entry = {
-        "timestamp": str(datetime.now()),
+        "timestamp": datetime.now().isoformat(),
         "type": attack_type,
         "source": source_ip,
-        "message": message
+        "message": msg
     }
 
-    try:
-        with open(LOG_FILE, "r") as f:
-            logs = json.load(f)
-    except (json.JSONDecodeError, FileNotFoundError):
-        logs = []
+    # Debug print
+    print(f"Logging alert: {log_entry}")
 
-    logs.append(log_entry)
-
-    with open(LOG_FILE, "w") as f:
-        json.dump(logs, f, indent=2)
+    with open(LOG_FILE, "a") as f:
+        f.write(json.dumps(log_entry) + "\n")

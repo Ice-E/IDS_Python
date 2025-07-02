@@ -1,30 +1,103 @@
-/* General page style */
+/* Page layout */
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  margin: 1rem;
+  background: #f9f9f9;
+  color: #333;
 }
 
-/* Header style */
-h1 {
-    color: #333;
+/* Button styling inside forms */
+form {
+  display: inline-block;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+}
+form button {
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  margin: 0.2rem 0;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+form button:hover {
+  background: #0056b3; /* Darker on hover */
 }
 
-/* Table layout and spacing */
+/* Responsive flex layout for chart and table blocks */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* Graph/chart block styling */
+.chart {
+  flex: 1 1 45%;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Log table styling */
+.log-table {
+  flex: 1 1 50%;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+/* Table structure and visual styles */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
 }
-
-/* Table cell style */
 th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+th {
+  background: #f1f1f1;
+}
+tbody tr:nth-child(odd) {
+  background: #fafafa;
+}
+tbody tr:hover {
+  background: #f0f8ff;
 }
 
-/* Table header background */
-th {
-    background-color: #eee;
+/* Ensure Chart.js canvas scales properly */
+.chart .chartjs-render-monitor {
+  max-width: 100%;
+  height: auto !important;
 }
+
+/* Page header */
+h1 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  color: #222;
+}
+
+/* Centered content utility */
+.center {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Highlight row colors by attack type */
+.log-Ping-Flood td { background: #e0f4ff; }   /* Light blue */
+.log-Port-Scan td { background: #ffe0e6; }     /* Light red/pink */
+.log-SYN-Flood td  { background: #fff4e0; }    /* Light orange */
+
+/* Ensure charts are side-by-side when possible */
+.container .chart { flex: 1 1 45%; }

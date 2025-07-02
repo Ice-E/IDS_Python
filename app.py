@@ -1,46 +1,50 @@
-import json
 import os
+import json
+from collections import Counter
+from datetime import datetime
 from threading import Thread
-from flask import Flask, render_template, request, redirect
-import subprocess
+
+from flask import Flask, render_template, redirect
 
 # Import detection modules
-from detector.arp_spoof import detect_arp_spoofing
 from detector.syn_flood import detect_syn_flood
 from detector.port_scan import detect_port_scan
 from detector.ping_flood import detect_ping_flood
 
-# Load configuration from config.json
+# Load configuration
 with open("config.json", "r") as f:
     config = json.load(f)
 
-log_file = config.get("log_file", "logs.json")
+log_file          = config.get("log_file", "logs/logs.json")
 enabled_detectors = config.get("detection", {})
+network_cfg       = config.get("network", {})
 
-# Initialize Flask app
+# Ensure log directory exists
+os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
 app = Flask(__name__)
 
 def read_logs():
     """
-    Reads logs from the configured log file and returns them as a list.
-    Most recent logs are returned first.
+    Reads the log file and returns the list of entries (one JSON object per line),
+    ordered from newest to oldest.
     """
+    if not os.path.exists(log_file):
+        return []
+    with open(log_file, "r") as f:
+        lines = [line.strip() for line in f if line.strip()]
     logs = []
-    if os.path.exists(log_file):
-        with open(log_file, "r") as f:
-            for line in f:
-                try:
-                    logs.append(json.loads(line.strip()))
-                except json.JSONDecodeError:
-                    continue
-    return logs[::-1]  # newest logs first
+    for line in lines:
+        try:
+            logs.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue  # Skip malformed lines
+    return list(reversed(logs))  # Most recent first
 
 def run_detectors():
     """
-    Starts enabled detection modules in separate daemon threads based on config.
+    Starts each enabled detector in a separate daemon thread.
     """
-    if enabled_detectors.get("arp_spoof", {}).get("enabled", False):
-        Thread(target=detect_arp_spoofing, daemon=True).start()
     if enabled_detectors.get("syn_flood", {}).get("enabled", False):
         Thread(target=detect_syn_flood, daemon=True).start()
     if enabled_detectors.get("port_scan", {}).get("enabled", False):
@@ -50,37 +54,71 @@ def run_detectors():
 
 @app.route("/")
 def index():
-    """
-    Renders the main dashboard page with the event logs.
-    """
+    # Read and sort logs (from oldest to newest)
     logs = read_logs()
-    return render_template("index.html", logs=logs)
+    logs_sorted = sorted(logs, key=lambda l: l["timestamp"])
+
+    # Doughnut chart: count per attack type
+    attack_counts = Counter(log.get("type") for log in logs_sorted if log.get("type"))
+
+    # Time series data:
+    # a) Extract time component (HH:MM:SS) from each timestamp
+    seconds = [
+        datetime.fromisoformat(log["timestamp"]).strftime("%H:%M:%S")
+        for log in logs_sorted
+    ]
+    # b) Get unique seconds in order
+    unique_seconds = sorted(set(seconds), key=lambda s: datetime.strptime(s, "%H:%M:%S"))
+
+    # c) Count number of attacks per second and per type
+    counts_per_second = {
+        sec: {atype: 0 for atype in attack_counts}
+        for sec in unique_seconds
+    }
+    for sec, log in zip(seconds, logs_sorted):
+        atype = log.get("type")
+        if atype in counts_per_second[sec]:
+            counts_per_second[sec][atype] += 1
+
+    # d) Cumulative count series for line chart
+    series = {atype: [] for atype in attack_counts}
+    cum    = {atype: 0  for atype in attack_counts}
+    for sec in unique_seconds:
+        for atype in attack_counts:
+            cum[atype] += counts_per_second[sec][atype]
+            series[atype].append(cum[atype])
+
+    return render_template(
+        "index.html",
+        logs=list(reversed(logs_sorted)),  # Show newest logs first
+        attack_counts=attack_counts,
+        time_labels=unique_seconds,
+        series=series
+    )
 
 @app.route("/clear", methods=["POST"])
 def clear_logs():
     """
-    Clears all logs from the log file.
+    Empties the log file.
     """
     open(log_file, "w").close()
     return redirect("/")
 
-@app.route('/attack/<attack_type>')
+@app.route("/attack/<attack_type>")
 def launch_attack(attack_type):
     """
-    Launches a simulated attack based on the given attack type.
+    Launches an attack simulation script in a daemon thread.
     """
     attack_scripts = {
-        "arp": "attacks/arp_spoof.py",
         "ping": "attacks/ping_flood.py",
         "port": "attacks/port_scan.py",
-        "syn": "attacks/syn_flood.py"
+        "syn":  "attacks/syn_flood.py"
     }
-    if attack_type in attack_scripts:
-        subprocess.Popen(["python3", attack_scripts[attack_type]])
-        return f"{attack_type} attack launched."
-    else:
-        return "Unknown attack type.", 400
+    script = attack_scripts.get(attack_type)
+    if script:
+        Thread(target=lambda: os.system(f"python {script}"), daemon=True).start()
+    return redirect("/")
 
 if __name__ == "__main__":
     run_detectors()
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
