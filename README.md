@@ -5,7 +5,6 @@ This project is a semester-long university assignment for learning Python throug
 ## Features
 
 - **Modular detection** of common attacks:
-  - ARP Spoofing
   - SYN Flood
   - Ping Flood
   - Port Scan
@@ -31,6 +30,7 @@ IDS_Python/
 ├── logs/                # Logs storage
 ├── run.sh               # Startup script
 ├── requirements.txt     # Python dependencies
+├── interface.py         # List network interface using Scapy for config.json
 └── README.md            # This file
 ```
 
@@ -44,9 +44,17 @@ pip install -r requirements.txt
 
 2. **Run the IDS**
 
+In Linux :
 ```bash
 bash run.sh
 ```
+
+In windows Powershell :
+```bash
+python app.py
+```
+
+*Warning: You must run the program with administrator/root privileges to allow packet sniffing.*
 
 3. **Open the Dashboard**
 
@@ -56,7 +64,6 @@ Navigate to [http://localhost:5000](http://localhost:5000) in your browser.
 
 Use the web interface to simulate attacks like:
 
-- ARP Spoofing
 - Ping Flood
 - SYN Flood
 - Port Scan
@@ -71,6 +78,10 @@ Edit `config.json` to:
 - Set thresholds for flood detection
 - Specify monitored IPs and network interface
 
+For more details, see:
+- [`config.json`](./config.json) for detection setup
+- [`utils/logger.py`](./utils/logger.py) for logging format
+
 ## Testing
 
 ```bash
@@ -79,6 +90,22 @@ pytest
 
 Runs unit tests on each detection module and the logging system.
 
+## Requirements
+
+- Python 3.10+
+- Scapy (Linux or Windows + Npcap)
+- Flask
+- Chart.js (CDN)
+
+Tested on:
+- Windows 10 + Npcap
+- Ubuntu 22.04
+
+## Authors
+
+- Emo Solène
+- Wu Bang-Guo
+  
 ## License
 
 This project is developed for academic purposes. Use it responsibly.
