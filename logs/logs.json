@@ -1,8 +1,1 @@
-{"timestamp": "2025-07-02T08:43:18.604959", "type": "Ping Flood", "source": "192.168.203.229", "message": "Ping flood detected from 192.168.203.229 (> 100 pkts/10s)"}
-{"timestamp": "2025-07-02T08:43:21.619461", "type": "Port Scan", "source": "192.168.203.229", "message": "Port scan detected from 192.168.203.229 (> 15 ports/10s)"}
-{"timestamp": "2025-07-02T08:43:27.109861", "type": "SYN Flood", "source": null, "message": "SYN flood detected on 100.64.22.76:80 (> 50/10s)"}
-{"timestamp": "2025-07-02T08:43:31.620516", "type": "Port Scan", "source": "192.168.203.229", "message": "Port scan detected from 192.168.203.229 (> 15 ports/10s)"}
-{"timestamp": "2025-07-02T08:43:39.409338", "type": "Ping Flood", "source": "192.168.203.229", "message": "Ping flood detected from 192.168.203.229 (> 100 pkts/10s)"}
-{"timestamp": "2025-07-02T08:43:40.390315", "type": "Ping Flood", "source": "192.168.203.229", "message": "Ping flood detected from 192.168.203.229 (> 100 pkts/10s)"}
-{"timestamp": "2025-07-02T08:43:45.462828", "type": "SYN Flood", "source": null, "message": "SYN flood detected on 100.64.22.76:80 (> 50/10s)"}
-{"timestamp": "2025-07-02T08:43:54.052884", "type": "SYN Flood", "source": null, "message": "SYN flood detected on 100.64.22.76:80 (> 50/10s)"}
+{"timestamp": "2025-07-02T13:06:55.405107", "type": "Test", "source": "1.2.3.4", "message": "Test alert message"}

@@ -1,23 +1,33 @@
 from scapy.layers.inet import IP, TCP
 from detector import syn_flood
 
+class DummyPkt:
+    def __init__(self, src, dst, dport):
+        self[IP] = IP(src=src, dst=dst)
+        self[TCP] = TCP(dport=dport, flags='S')
+
+    def haslayer(self, layer):
+        return layer in [IP, TCP]
+
+    def __getitem__(self, item):
+        return self.__dict__.get(item)
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
 def test_syn_flood_detection(monkeypatch):
-    """
-    Tests SYN flood detection by sending a burst of SYN packets
-    from a single source IP to exceed the detection threshold.
-    """
+    syn_flood.monitor_ips = ["10.0.0.100"]
+    syn_flood.threshold = 5
+
     alerts = []
+    monkeypatch.setattr(syn_flood, "log_alert", lambda msg, attack_type=None, source_ip=None: alerts.append((msg, attack_type, source_ip)))
 
-    # Replace the real logger with a mock to collect alerts
-    def fake_log_alert(message, attack_type=None, source_ip=None):
-        alerts.append((message, attack_type, source_ip))
+    syn_flood.syn_packets.clear()
+    syn_flood.alerts_issued.clear()
 
-    monkeypatch.setattr("detector.syn_flood.log_alert", fake_log_alert)
+    for _ in range(6):
+        pkt = DummyPkt(src="192.168.1.200", dst="10.0.0.100", dport=80)
+        syn_flood.process_packet(pkt)
 
-    # Send 201 SYN packets (threshold is 200) from the same IP
-    for _ in range(201):
-        pkt = IP(src="172.16.0.8") / TCP(flags="S")
-        syn_flood.handle_packet(pkt)
-
-    assert len(alerts) >= 1
-    assert alerts[0][1] == "SYN Flood"
+    assert len(alerts) == 1
+    assert "SYN flood" in alerts[0][0]

@@ -85,7 +85,7 @@ For more details, see:
 ## Testing
 
 ```bash
-pytest
+pytest tests/
 ```
 
 Runs unit tests on each detection module and the logging system.

@@ -1,7 +1,6 @@
 import os, json
 from datetime import datetime
 
-# Assure-toi que le dossier logs existe
 os.makedirs("logs", exist_ok=True)
 LOG_FILE = os.path.join("logs", "logs.json")
 
@@ -10,7 +9,6 @@ def log_alert(message, attack_type=None, source_ip=None):
     Logs a structured security alert as a single-line JSON object,
     avec un message lisible par le front.
     """
-    # Déplie le dict message si nécessaire
     if isinstance(message, dict):
         kind   = message.get("type")
         ip     = message.get("ip")
